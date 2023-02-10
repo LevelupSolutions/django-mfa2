@@ -53,7 +53,7 @@ def verify(request,username):
     return show_methods(request)
 
 def show_methods(request):
-    return render(request,"select_mfa_method.html", {'RENAME_METHODS':getattr(settings,'MFA_RENAME_METHODS',{})})
+    return render(request,"mfa/select_mfa_method.html", {'RENAME_METHODS':getattr(settings,'MFA_RENAME_METHODS',{})})
 
 def reset_cookie(request):
     response=HttpResponseRedirect(settings.LOGIN_URL)
