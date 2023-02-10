@@ -12,7 +12,6 @@ import datetime
 from django.utils import timezone
 import random
 
-
 def verify_login(request,username,token):
     for key in User_Keys.objects.filter(username=username,key_type = "TOTP"):
         totp = pyotp.TOTP(key.properties["secret_key"])

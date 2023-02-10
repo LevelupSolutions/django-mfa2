@@ -1,6 +1,7 @@
 import string
 import random
 from django.shortcuts import render
+from django.views.decorators.cache import never_cache
 from django.http import HttpResponse
 from django.template.context import RequestContext
 from django.template.context_processors import csrf
@@ -55,6 +56,7 @@ def getCookie(request):
         response.set_cookie("deviceid", tk.properties["signature"], expires=expires)
         return response
 
+@never_cache
 def add(request):
     context=csrf(request)
     if request.method=="GET":
@@ -86,6 +88,7 @@ def add(request):
 
         return  render(request,"mfa/TrustedDevices/Add.html", context)
 
+@never_cache
 def start(request):
     if User_Keys.objects.filter(username=request.user.username,key_type="Trusted Device").count()>= 2:
         return render(request,"mfa/TrustedDevices/start.html",{"not_allowed":True})

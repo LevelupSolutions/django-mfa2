@@ -4,6 +4,8 @@ from u2flib_server.u2f import (begin_registration, begin_authentication,
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import Encoding
+from django.views.decorators.cache import never_cache
+
 from django.shortcuts import render
 import simplejson
 #from django.template.context import RequestContext
@@ -16,6 +18,7 @@ from .Common import get_redirect_url
 import datetime
 from django.utils import timezone
 
+@never_cache
 def recheck(request):
     context = csrf(request)
     context["mode"]="recheck"
@@ -41,6 +44,7 @@ def check_errors(request, data):
         if data["errorCode"] == 1:
             return auth(request)
     return True
+
 def validate(request,username):
     import datetime, random
 
@@ -66,8 +70,7 @@ def validate(request,username):
     except:
         return False
 
-
-
+@never_cache
 def auth(request):
     context=csrf(request)
     s=sign(request.session["base_username"])
@@ -76,6 +79,7 @@ def auth(request):
     context["method"] = {"name": getattr(settings, "MFA_RENAME_METHODS", {}).get("U2F", "Classical Security Key")}
     return render(request,"mfa/U2F/Auth.html",context)
 
+@never_cache
 def start(request):
     enroll = begin_registration(settings.U2F_APPID, [])
     request.session['_u2f_enroll_'] = enroll.json
@@ -85,7 +89,6 @@ def start(request):
     context["method"] = {"name": getattr(settings, "MFA_RENAME_METHODS", {}).get("U2F", "Classical Security Key")}
     context["RECOVERY_METHOD"] = getattr(settings, "MFA_RENAME_METHODS", {}).get("RECOVERY", "Recovery codes")
     return render(request,"mfa/U2F/Add.html",context)
-
 
 def bind(request):
     import hashlib

@@ -2,6 +2,8 @@ import importlib
 
 from django.shortcuts import render
 from django.http import HttpResponse,HttpResponseRedirect
+from django.views.decorators.cache import never_cache
+
 from .models import *
 try:
     from django.urls import reverse
@@ -14,6 +16,7 @@ from . import TrustedDevice
 from django.contrib.auth.decorators import login_required
 from user_agents import parse
 
+@never_cache
 @login_required
 def index(request):
     keys=[]
@@ -32,6 +35,7 @@ def index(request):
     context["keys"]=keys
     return render(request,"mfa/MFA.html",context)
 
+@never_cache
 def verify(request,username):
     request.session["base_username"] = username
     #request.session["base_password"] = password
@@ -52,21 +56,24 @@ def verify(request,username):
             return HttpResponseRedirect(reverse(keys[0].key_type.lower() + "_auth"))
     return show_methods(request)
 
+@never_cache
 def show_methods(request):
     return render(request,"mfa/select_mfa_method.html", {'RENAME_METHODS':getattr(settings,'MFA_RENAME_METHODS',{})})
 
+@never_cache
 def reset_cookie(request):
     response=HttpResponseRedirect(settings.LOGIN_URL)
     response.delete_cookie("base_username")
     return response
 
+@never_cache
 def login(request):
     from django.contrib import auth
     from django.conf import settings
     callable_func = __get_callable_function__(settings.MFA_LOGIN_CALLBACK)
     return callable_func(request,username=request.session["base_username"])
 
-
+@never_cache
 @login_required
 def delKey(request):
     key=User_Keys.objects.get(id=request.GET["id"])
@@ -89,6 +96,7 @@ def __get_callable_function__(func_path):
         raise Exception("Module does not have requested function")
     return callable_func
 
+@never_cache
 @login_required
 def toggleKey(request):
     id=request.GET["id"]
@@ -104,5 +112,6 @@ def toggleKey(request):
     else:
         return HttpResponse("Error")
 
+@never_cache
 def goto(request,method):
     return HttpResponseRedirect(reverse(method.lower()+"_auth"))
