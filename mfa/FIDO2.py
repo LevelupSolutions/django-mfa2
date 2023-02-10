@@ -23,7 +23,7 @@ def recheck(request):
     context = csrf(request)
     context["mode"] = "recheck"
     request.session["mfa_recheck"] = True
-    return render(request, "FIDO2/recheck.html", context)
+    return render(request, "mfa/FIDO2/recheck.html", context)
 
 
 def getServer():
@@ -90,7 +90,7 @@ def start(request):
     context.update(get_redirect_url())
     context["method"] = {"name":getattr(settings,"MFA_RENAME_METHODS",{}).get("FIDO2","FIDO2 Security Key")}
     context["RECOVERY_METHOD"]=getattr(settings,"MFA_RENAME_METHODS",{}).get("RECOVERY","Recovery codes")
-    return render(request, "FIDO2/Add.html", context)
+    return render(request, "mfa/FIDO2/Add.html", context)
 
 
 def getUserCredentials(username):
@@ -102,7 +102,7 @@ def getUserCredentials(username):
 
 def auth(request):
     context = csrf(request)
-    return render(request, "FIDO2/Auth.html", context)
+    return render(request, "mfa/FIDO2/Auth.html", context)
 
 
 def authenticate_begin(request):

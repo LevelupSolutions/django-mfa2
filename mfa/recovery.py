@@ -81,7 +81,7 @@ def recheck(request):
             return HttpResponse(simplejson.dumps({"recheck": True}), content_type="application/json")
         else:
             return HttpResponse(simplejson.dumps({"recheck": False}), content_type="application/json")
-    return render(request,"RECOVERY/recheck.html", context)
+    return render(request,"mfa/RECOVERY/recheck.html", context)
 
 @never_cache
 def auth(request):
@@ -102,7 +102,7 @@ def auth(request):
                 if resBackup[2]:
                     #If the last bakup code has just been used, we return a response insead of redirecting to login
                     context["lastBackup"] = True
-                    return render(request,"RECOVERY/Auth.html", context)                
+                    return render(request,"mfa/RECOVERY/Auth.html", context)                
                 return login(request)
         context["invalid"]=True
 
@@ -119,4 +119,4 @@ def start(request):
     context = get_redirect_url()
     if "mfa_reg" in request.session:
         context["mfa_redirect"] = request.session["mfa_reg"]["name"]
-    return render(request,"RECOVERY/Add.html",context)
+    return render(request,"mfa/RECOVERY/Add.html",context)

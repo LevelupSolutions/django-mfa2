@@ -15,7 +15,7 @@ def sendEmail(request,username,secret):
     key = getattr(User, 'USERNAME_FIELD', 'username')
     kwargs = {key: username}
     user = User.objects.get(**kwargs)
-    res=render(request,"mfa_email_token_template.html",{"request":request,"user":user,'otp':secret})
+    res=render(request,"mfa/mfa_email_token_template.html",{"request":request,"user":user,'otp':secret})
     return send([user.email],"OTP", res.content.decode())
 
 @never_cache
@@ -46,7 +46,7 @@ def start(request):
 
         if sendEmail(request, request.user.username, request.session["email_secret"]):
             context["sent"] = True
-    return render(request,"Email/Add.html", context)
+    return render(request,"mfa/Email/Add.html", context)
 @never_cache
 def auth(request):
     """Authenticating the user by email."""
@@ -69,4 +69,4 @@ def auth(request):
         request.session["email_secret"] = str(randint(0, 100000))
         if sendEmail(request, request.session["base_username"], request.session["email_secret"]):
             context["sent"] = True
-    return render(request,"Email/Auth.html", context)
+    return render(request,"mfa/Email/Auth.html", context)

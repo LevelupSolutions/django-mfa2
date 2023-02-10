@@ -20,7 +20,7 @@ def getUserAgent(request):
         tk=User_Keys.objects.get(id=id)
         if tk.properties.get("user_agent","")!="":
             ua = user_agents.parse(tk.properties["user_agent"])
-            res = render(None, "TrustedDevices/user-agent.html", context={"ua":ua})
+            res = render(None, "mfa/TrustedDevices/user-agent.html", context={"ua":ua})
             return HttpResponse(res)
     return HttpResponse("")
 
@@ -47,7 +47,7 @@ def getCookie(request):
 
     if tk.properties["status"] == "trusted":
         context={"added":True}
-        response = render(request,"TrustedDevices/Done.html", context)
+        response = render(request,"mfa/TrustedDevices/Done.html", context)
         from datetime import datetime, timedelta
         expires = datetime.now() + timedelta(days=180)
         tk.expires=expires
@@ -59,7 +59,7 @@ def add(request):
     context=csrf(request)
     if request.method=="GET":
         context.update({"username":request.GET.get('u',''),"key":request.GET.get('k','')})
-        return render(request,"TrustedDevices/Add.html",context)
+        return render(request,"mfa/TrustedDevices/Add.html",context)
     else:
         key=request.POST["key"].replace("-","").replace(" ","").upper()
         context["username"] = request.POST["username"]
@@ -84,11 +84,11 @@ def add(request):
         else:
             context["invalid"]="The username or key is wrong, please check and try again."
 
-        return  render(request,"TrustedDevices/Add.html", context)
+        return  render(request,"mfa/TrustedDevices/Add.html", context)
 
 def start(request):
     if User_Keys.objects.filter(username=request.user.username,key_type="Trusted Device").count()>= 2:
-        return render(request,"TrustedDevices/start.html",{"not_allowed":True})
+        return render(request,"mfa/TrustedDevices/start.html",{"not_allowed":True})
     td=None
     if not request.session.get("td_id",None):
         td=User_Keys()
@@ -103,10 +103,10 @@ def start(request):
     except:
         del request.session["td_id"]
         return start(request)
-    return render(request,"TrustedDevices/start.html",context)
+    return render(request,"mfa/TrustedDevices/start.html",context)
 
 def send_email(request):
-    body=render(request,"TrustedDevices/email.html",{}).content
+    body=render(request,"mfa/TrustedDevices/email.html",{}).content
     from .Common import send
     e=request.user.email
     if e=="":

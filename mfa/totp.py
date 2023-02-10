@@ -32,7 +32,7 @@ def recheck(request):
             return HttpResponse(simplejson.dumps({"recheck": True}), content_type="application/json")
         else:
             return HttpResponse(simplejson.dumps({"recheck": False}), content_type="application/json")
-    return render(request,"TOTP/recheck.html", context)
+    return render(request,"mfa/TOTP/recheck.html", context)
 
 @never_cache
 def auth(request):
@@ -51,7 +51,7 @@ def auth(request):
                 request.session["mfa"] = mfa
                 return login(request)
         context["invalid"]=True
-    return render(request,"TOTP/Auth.html", context)
+    return render(request,"mfa/TOTP/Auth.html", context)
 
 
 
@@ -87,4 +87,4 @@ def start(request):
     context = get_redirect_url()
     context["RECOVERY_METHOD"] = getattr(settings, "MFA_RENAME_METHODS", {}).get("RECOVERY", "Recovery codes")
     context["method"] = {"name":getattr(settings,"MFA_RENAME_METHODS",{}).get("TOTP","Authenticator")}
-    return render(request,"TOTP/Add.html",context)
+    return render(request,"mfa/TOTP/Add.html",context)

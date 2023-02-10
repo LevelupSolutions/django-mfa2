@@ -23,7 +23,7 @@ def recheck(request):
     request.session["_u2f_challenge_"] = s[0]
     context["token"] = s[1]
     request.session["mfa_recheck"]=True
-    return render(request,"U2F/recheck.html", context)
+    return render(request,"mfa/U2F/recheck.html", context)
 
 def process_recheck(request):
     x=validate(request,request.user.username)
@@ -74,7 +74,7 @@ def auth(request):
     request.session["_u2f_challenge_"]=s[0]
     context["token"]=s[1]
     context["method"] = {"name": getattr(settings, "MFA_RENAME_METHODS", {}).get("U2F", "Classical Security Key")}
-    return render(request,"U2F/Auth.html",context)
+    return render(request,"mfa/U2F/Auth.html",context)
 
 def start(request):
     enroll = begin_registration(settings.U2F_APPID, [])
@@ -84,7 +84,7 @@ def start(request):
     context.update(get_redirect_url())
     context["method"] = {"name": getattr(settings, "MFA_RENAME_METHODS", {}).get("U2F", "Classical Security Key")}
     context["RECOVERY_METHOD"] = getattr(settings, "MFA_RENAME_METHODS", {}).get("RECOVERY", "Recovery codes")
-    return render(request,"U2F/Add.html",context)
+    return render(request,"mfa/U2F/Add.html",context)
 
 
 def bind(request):

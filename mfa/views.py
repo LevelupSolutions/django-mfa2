@@ -30,7 +30,7 @@ def index(request):
             continue
         keys.append(k)
     context["keys"]=keys
-    return render(request,"MFA.html",context)
+    return render(request,"mfa/MFA.html",context)
 
 def verify(request,username):
     request.session["base_username"] = username
