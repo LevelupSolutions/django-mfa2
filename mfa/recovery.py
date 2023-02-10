@@ -111,7 +111,7 @@ def auth(request):
         if mfa and mfa["verified"] and mfa["lastBackup"]:
             return login(request)
 
-    return render(request,"RECOVERY/Auth.html", context)
+    return render(request,"mfa/RECOVERY/Auth.html", context)
 
 @never_cache
 def start(request):
