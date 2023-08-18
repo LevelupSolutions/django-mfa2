@@ -53,7 +53,7 @@ def auth(request):
     context=csrf(request)
     if request.method=="POST":
         if request.session["email_secret"]==request.POST["otp"].strip():
-            uk = User_Keys.objects.get(username=request.session["base_username"], key_type="Email")
+            uk = User_Keys.objects.filter(username=request.session["base_username"], key_type="Email").first()
             mfa = {"verified": True, "method": "Email","id":uk.id}
             if getattr(settings, "MFA_RECHECK", False):
                 mfa["next_check"] = datetime.datetime.timestamp(datetime.datetime.now() + datetime.timedelta(
